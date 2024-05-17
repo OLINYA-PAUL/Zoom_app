@@ -7,9 +7,9 @@ import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 
 const MeetingSetUp = ({
-  setIsSetUpComplted,
+  setIsSetUpCompleted,
 }: {
-  setIsSetUpComplted: (value: boolean) => void;
+  setIsSetUpCompleted: (value: boolean) => void;
 }) => {
   const [isMicCamToggledOn, setIsisMicCamToggledOn] = useState<boolean>(false);
 
@@ -28,7 +28,7 @@ const MeetingSetUp = ({
 
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center gap-3 text-white">
-      <h1 className="text-center text-2xl font-bold mt-[200px]">Setup</h1>
+      <h1 className="text-center text-2xl font-bold ">Setup</h1>
       <VideoPreview />
       <div className="flex h-16 items-center justify-center gap-3">
         <label className="flex items-center justify-center gap-2 font-medium">
@@ -45,8 +45,7 @@ const MeetingSetUp = ({
         className="rounded-md bg-green-500 px-4 py-2.5"
         onClick={() => {
           call.join();
-
-          setIsSetUpComplted(true);
+          setIsSetUpCompleted(true);
         }}
       >
         Join meeting

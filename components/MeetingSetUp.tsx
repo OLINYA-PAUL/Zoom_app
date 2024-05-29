@@ -1,10 +1,14 @@
 import {
+  CallState,
+  CallingState,
   DeviceSettings,
   VideoPreview,
   useCall,
+  useCallStateHooks,
 } from "@stream-io/video-react-sdk";
 import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
+import Loader from "./Loader";
 
 const MeetingSetUp = ({
   setIsSetUpCompleted,
@@ -12,6 +16,11 @@ const MeetingSetUp = ({
   setIsSetUpCompleted: (value: boolean) => void;
 }) => {
   const [isMicCamToggledOn, setIsisMicCamToggledOn] = useState<boolean>(false);
+  const { useCallCallingState } = useCallStateHooks();
+
+  const callingState = useCallCallingState();
+
+  // if (callingState !== CallingState.JOINED) return <Loader />;
 
   const call = useCall();
   if (!call) throw alert("please start a call");

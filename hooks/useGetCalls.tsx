@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { Call, User, useStreamVideoClient } from "@stream-io/video-react-sdk";
+import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
+import { Call, useStreamVideoClient } from "@stream-io/video-react-sdk";
 
-const useGetCalls = () => {
-  const [calls, setcalls] = useState<User[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const client = useStreamVideoClient();
+export const useGetCalls = () => {
   const { user } = useUser();
+  const client = useStreamVideoClient();
+  const [calls, setCalls] = useState<Call[]>();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const loadCalls = async () => {
-      if (!client || user?.id) return;
+      if (!client || !user?.id) return;
+
       setIsLoading(true);
 
       try {
@@ -20,15 +20,15 @@ const useGetCalls = () => {
           filter_conditions: {
             starts_at: { $exists: true },
             $or: [
-              { created_by_user_id: user?.id },
-              { members: { $in: [user?.id] } },
+              { created_by_user_id: user.id },
+              { members: { $in: [user.id] } },
             ],
           },
         });
-        //@ts-ignore
-        setcalls(calls);
-      } catch (error: any) {
-        console.log(error.message);
+
+        setCalls(calls);
+      } catch (error) {
+        console.error(error);
       } finally {
         setIsLoading(false);
       }
@@ -39,22 +39,13 @@ const useGetCalls = () => {
 
   const now = new Date();
 
-  //@ts-ignore
-  const endedCalls = calls.filter(({ state: { startsAt, endedAt } }: Call) => {
+  const endedCalls = calls?.filter(({ state: { startsAt, endedAt } }: Call) => {
     return (startsAt && new Date(startsAt) < now) || !!endedAt;
   });
 
-  //@ts-ignore
-  const upcomingCalls = calls.filter(({ state: { startsAt } }: Call) => {
+  const upcomingCalls = calls?.filter(({ state: { startsAt } }: Call) => {
     return startsAt && new Date(startsAt) > now;
   });
 
-  return {
-    endedCalls,
-    upcomingCalls,
-    callRecordings: calls,
-    isLoading,
-  };
+  return { endedCalls, upcomingCalls, callRecordings: calls, isLoading };
 };
-
-export default useGetCalls;

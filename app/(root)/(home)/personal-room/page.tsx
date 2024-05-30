@@ -1,16 +1,6 @@
+"use client";
+
 import React from "react";
-
-// const PersonalRoom = () => {
-//   return (
-//     <section className="flex size-full flex-col gap-5 text-white">
-//       <div className="text-3xl font-bold text-white">PersonalRoom</div>
-//     </section>
-//   );
-// };
-
-// export default PersonalRoom;
-
-("use client");
 
 import { useUser } from "@clerk/nextjs";
 import { useStreamVideoClient } from "@stream-io/video-react-sdk";
@@ -42,26 +32,26 @@ const Table = ({
 const PersonalRoom = () => {
   const router = useRouter();
   const { user } = useUser();
+  const client = useStreamVideoClient();
 
   const meetingId = user?.id;
 
   const { call } = useGetCallById(meetingId!);
 
-  // const startRoom = async () => {
-  //   if (!client || !user) return;
+  const startRoom = async () => {
+    if (!client || !call) return;
 
-  //   const newCall = client.call("default", meetingId!);
+    const newCall = client.call("default", meetingId!);
 
-  //   if (!call) {
-  //     await newCall.getOrCreate({
-  //       data: {
-  //         starts_at: new Date().toISOString(),
-  //       },
-  //     });
-  //   }
-
-  //   router.push(`/meeting/${meetingId}?personal=true`);
-  // };
+    if (!call) {
+      await newCall?.getOrCreate({
+        data: {
+          starts_at: new Date().toISOString(),
+        },
+      });
+    }
+    router.push(`/meeting/${meetingId}?personal=true`);
+  };
 
   const meetingLink = `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${meetingId}?personal=true`;
 

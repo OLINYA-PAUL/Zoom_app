@@ -1,20 +1,19 @@
-//@ts-nocheck
-
 "use client";
 
 import { Call, CallRecording } from "@stream-io/video-react-sdk";
 
 import Loader from "../Loader";
-import useGetCalls from "@/hooks/useGetCalls";
+import { useGetCalls } from "@/hooks/useGetCalls";
 import MeetingCard from "../MeetingCard";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 const CallList = ({ type }: { type: "ended" | "upcoming" | "recordings" }) => {
-  const router = useRouter();
   const { endedCalls, upcomingCalls, callRecordings, isLoading } =
     useGetCalls();
   const [recordings, setRecordings] = useState<CallRecording[]>([]);
+
+  const router = useRouter();
 
   const getCalls = () => {
     switch (type) {

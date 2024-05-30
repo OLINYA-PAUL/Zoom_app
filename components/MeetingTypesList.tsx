@@ -8,13 +8,14 @@ import { useUser } from "@clerk/nextjs";
 import { Call, useStreamVideoClient } from "@stream-io/video-react-sdk";
 import { useToast } from "@/components/ui/use-toast";
 import { Textarea } from "./ui/textarea";
+import { Input } from "@/components/ui/input";
 import ReactDatePicker from "react-datepicker";
 
 const MeetingTypesList = () => {
   const [value, setValue] = useState({
     startTime: new Date(),
-    description: " ",
-    link: " ",
+    description: "",
+    link: "",
   });
   const [callDetails, setCallDetails] = useState<Call>();
   const [meetingState, setMeetingState] = useState<
@@ -52,13 +53,12 @@ const MeetingTypesList = () => {
         },
       });
 
-      if (value.description) router.push(`/meeting/${call.id}`);
+      if (!value.description) router.push(`/meeting/${call.id}`);
       setCallDetails(call);
 
       toast({ title: "Meeting created sucessfully!! 😜😜😜" });
     } catch (error: any) {
       toast({ title: "Something went wrong try again!!😂😂😂" });
-      console.log(error);
     }
   };
 
@@ -125,7 +125,7 @@ const MeetingTypesList = () => {
               </label>
               <ReactDatePicker
                 selected={value.startTime}
-                onChange={(date) => ""}
+                onChange={(date) => setValue({ ...value, startTime: date! })}
                 showTimeSelect
                 timeFormat="HH:mm"
                 timeIntervals={15}
@@ -160,6 +160,21 @@ const MeetingTypesList = () => {
         buttonText="Start Meeting"
         handleClick={createMeeting}
       />
+      <MeetingModel
+        isOpen={meetingState === "isJoiningMeeting"}
+        onClose={() => setMeetingState(undefined)}
+        title="Paste your link here"
+        className="flex-center"
+        buttonText="add the link"
+        handleClick={() => router.push(value.link)}
+      >
+        <Input
+          placeholder="write your text here"
+          className="border-none bg-dark-3 focus-visible:ring-0 focus-visible:ring-offset-0"
+          //@ts-ignore
+          onClick={(e) => setValue({ ...value, link: e.target.value })}
+        />
+      </MeetingModel>
     </section>
   );
 };
